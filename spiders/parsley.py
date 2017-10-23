@@ -10,7 +10,9 @@ class ParsleySpider(Spider):
     name = 'Parsley'
 
     def __init__(self, **kwargs):
-        dic = yaml.load(kwargs['parselet'])
+        with open(kwargs['parselet']) as _f:
+            yml = _f.read()
+        dic = yaml.load(yml)
         domain = kwargs['domain']
         url = kwargs.get('url', 'https://{}/'.format(domain))
         super(ParsleySpider, self).__init__(**kwargs)
