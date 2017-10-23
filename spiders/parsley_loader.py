@@ -9,7 +9,7 @@ class MyItemLoader(ItemLoader):
 
 def iter_parsley(item_cls, parselet, response, item_key):
     '''extract data from a response using a parselet'''
-    loader = MyItemLoader(item_cls())
+    loader = MyItemLoader(item_cls)
     data = parselet.parse(cStringIO.StringIO(response.body))
     if item_key:
         for item_value in data.get(item_key):

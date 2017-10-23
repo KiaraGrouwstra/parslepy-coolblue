@@ -11,7 +11,7 @@ class NYTimesSpider(scrapy.Spider):
     name = 'NYTimes'
     allowed_domains = ['nytimes.com']
     start_urls = ['http://www.nytimes.com/pages/technology/']
-    item_cls = NYTimesNewsItem
+    item_cls = NYTimesNewsItem()
     # item_cls = get_item_class(['title', 'author', 'summary', 'image', 'url', 'timestamp'])
 
     def __init__(self, **kwargs):
