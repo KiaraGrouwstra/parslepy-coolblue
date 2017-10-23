@@ -7,6 +7,7 @@ from scrapy import Spider
 from scrapy.http import Request
 from scrapy.linkextractors.lxmlhtml import LxmlParserLinkExtractor
 from parslepy import Parselet
+from extruct import extract as extruct
 
 class ParsleySpider(Spider):
     '''scrape a parselet
@@ -32,16 +33,19 @@ class ParsleySpider(Spider):
         self.start_urls = [url]
 
     def parse(self, response):
-        if search(self.pattern, response.request.url):
+        url = response.request.url
+        body = response.body
+        if search(self.pattern, url):
             # yield vars(response)
-            data = self.parselet.parse(StringIO(response.body))
+            data = self.parselet.parse(StringIO(body))
             if len(data.keys()) == 1 and isinstance(data.values()[0], list):
                 for item_value in data.values()[0]:
                     yield item_value
             else:
+                data.update(extruct(body, url))
                 yield data
         else:
-            self.logger.debug('skip url {}'.format(response.request.url))
+            self.logger.debug('skip url {}'.format(url))
 
         if self.crawl:
             for link in LxmlParserLinkExtractor().extract_links(response):
