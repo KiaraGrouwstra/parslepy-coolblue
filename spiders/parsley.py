@@ -10,12 +10,12 @@ class ParsleySpider(Spider):
     name = 'Parsley'
 
     def __init__(self, **kwargs):
-        super(ParsleySpider, self).__init__(**kwargs)
         dic = yaml.load(kwargs['parselet'])
-        self.parselet = Parselet.from_jsonstring(json.dumps(dic))
         domain = kwargs['domain']
-        self.allowed_domains = [domain]
         url = kwargs.get('url', 'https://{}/'.format(domain))
+        super(ParsleySpider, self).__init__(**kwargs)
+        self.parselet = Parselet.from_jsonstring(json.dumps(dic))
+        self.allowed_domains = [domain]
         self.start_urls = [url]
 
     def parse(self, response):
