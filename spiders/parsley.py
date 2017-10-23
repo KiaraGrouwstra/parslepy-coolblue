@@ -22,19 +22,33 @@ def get_item_class(props):
         cls._values[k] = Field()
     return cls
 
+def parselet_keys(parselet):
+    '''get the item keys from a parselet dict'''
+    keys = parselet.keys()
+    if keys[0][-1] == ')':
+        return parselet_keys(parselet.values()[0])
+    else:
+        return keys
+
 class ParsleySpider(Spider):
     '''scrape a parselet'''
     name = 'Parsley'
-    allowed_domains = ['nytimes.com']
-    start_urls = ['http://www.nytimes.com/pages/technology/']
-    item_cls = get_item_class(['title', 'author', 'summary', 'image', 'url', 'timestamp'])
 
     def __init__(self, **kwargs):
         super(ParsleySpider, self).__init__(**kwargs)
         self.item_key = kwargs['item_key']
-        self.parselet = Parselet.from_jsonstring(json.dumps(yaml.load(kwargs['parselet'])))
+        dic = yaml.load(kwargs['parselet'])
+        self.parselet = Parselet.from_jsonstring(json.dumps(dic))
+        keys = ['title', 'author', 'summary', 'image', 'url', 'timestamp']
+        # keys = parselet_keys(dic)
+        self.item_cls = get_item_class(keys)
+        domain = kwargs['domain']
+        self.allowed_domains = [domain]
+        url = kwargs.get('url', 'https://{}/'.format(domain))
+        self.start_urls = [url]
 
     def parse(self, response):
+        # self.logger.debug('crawled url {}'.format(response.request.url))
         loader = MyItemLoader(self.item_cls)
         data = self.parselet.parse(cStringIO.StringIO(response.body))
         if self.item_key:
@@ -44,3 +58,9 @@ class ParsleySpider(Spider):
         else:
             loader.add_value(None, data)
             yield loader.load_item()
+        # for link in scrapy.linkextractors.lxmlhtml.LxmlParserLinkExtractor().extract_links(response):
+        #     yield scrapy.http.Request(link.url, callback=self.parse)
+        # yield vars(response)
+        # #patts = item['attrs']['dump_patterns']
+        # #if (not patts) or (patts and (regex.search(response.request.url) for regex in patts)):
+        # #    yield item
