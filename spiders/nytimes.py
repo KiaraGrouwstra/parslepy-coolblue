@@ -18,12 +18,10 @@ class NYTimesSpider(scrapy.Spider):
     allowed_domains = ['nytimes.com']
     start_urls = ['http://www.nytimes.com/pages/technology/']
 
-    def __init__(self, **kwargs): # , *args
-        if kwargs['parselet']:
-            parselet = json.dumps(yaml.load(kwargs['parselet']))
-            self.parselet = parslepy.Parselet.from_jsonstring(parselet) # from_jsonfile(open(path))
-        super(NYTimesSpider, self).__init__() # (*args, **kwargs)
+    def __init__(self, **kwargs):
+        super(NYTimesSpider, self).__init__(**kwargs)
+        parselet = json.dumps(yaml.load(kwargs['parselet']))
+        self.parselet = parslepy.Parselet.from_jsonstring(parselet)
 
     def parse(self, response):
-        loader = ParsleyItemClassLoader(NYTimesNewsItem, NYTimesItemLoader, self.parselet, item_key="newsitems", response=response)
-        return loader.iter_items()
+        return ParsleyItemClassLoader(NYTimesNewsItem, NYTimesItemLoader, self.parselet, item_key="newsitems", response=response).iter_items()

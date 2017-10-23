@@ -1,5 +1,5 @@
 import cStringIO as StringIO
-import pprint
+# import pprint
 
 class ParsleyItemClassLoader(object):
     def __init__(self, item_class, item_loader_class, parselet, item_key, response, **context):
