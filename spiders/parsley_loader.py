@@ -1,5 +1,5 @@
+'''get stuff with parselet'''
 import cStringIO
-# import pprint
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst
 
@@ -8,6 +8,7 @@ class MyItemLoader(ItemLoader):
     default_output_processor = TakeFirst()
 
 def iter_parsley(item_cls, parselet, response, item_key):
+    '''extract data from a response using a parselet'''
     loader = MyItemLoader(item_cls())
     data = parselet.parse(cStringIO.StringIO(response.body))
     if item_key:
