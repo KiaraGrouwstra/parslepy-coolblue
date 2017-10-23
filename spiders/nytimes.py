@@ -5,10 +5,9 @@ scrape NYTimes
 import json
 import yaml
 import scrapy
-import parslepy
-from spiders.parsley_loader import ParsleyItemClassLoader
+from parslepy import Parselet
+from spiders.parsley_loader import iter_parsley
 from spiders.nytimes_news_item import NYTimesNewsItem
-from spiders.nytimes_loader import NYTimesItemLoader
 
 class NYTimesSpider(scrapy.Spider):
     '''
@@ -20,8 +19,8 @@ class NYTimesSpider(scrapy.Spider):
 
     def __init__(self, **kwargs):
         super(NYTimesSpider, self).__init__(**kwargs)
-        parselet = json.dumps(yaml.load(kwargs['parselet']))
-        self.parselet = parslepy.Parselet.from_jsonstring(parselet)
+        self.item_key = kwargs['item_key'] or 'newsitems'
+        self.parselet = Parselet.from_jsonstring(json.dumps(yaml.load(kwargs['parselet'])))
 
     def parse(self, response):
-        return ParsleyItemClassLoader(NYTimesNewsItem, NYTimesItemLoader, self.parselet, item_key="newsitems", response=response).iter_items()
+        return iter_parsley(NYTimesNewsItem, self.parselet, self.item_key, response)
