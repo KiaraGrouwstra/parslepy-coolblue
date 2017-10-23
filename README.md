@@ -1,4 +1,4 @@
 # Usage:
 ```bash
-scrapy crawl NYTimes -o results/nytimes.json -a parselet="`cat parselets/nytimes__technology.let.json`"
+scrapy crawl NYTimes -o results/nytimes.jl -a parselet="`cat parselets/nytimes__technology.let.yml`"
 ```
