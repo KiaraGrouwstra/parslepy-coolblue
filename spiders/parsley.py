@@ -24,11 +24,14 @@ def get_item_class(props):
 
 def parselet_keys(parselet):
     '''get the item keys from a parselet dict'''
-    keys = parselet.keys()
-    if keys[0][-1] == ')':
-        return parselet_keys(parselet.values()[0])
+    if isinstance(parselet, list):
+        return parselet_keys(parselet[0])
     else:
-        return keys
+        keys = parselet.keys()
+        if keys[0][-1] == ')':
+            return parselet_keys(parselet.values()[0])
+        else:
+            return keys
 
 class ParsleySpider(Spider):
     '''scrape a parselet'''
@@ -39,8 +42,7 @@ class ParsleySpider(Spider):
         self.item_key = kwargs['item_key']
         dic = yaml.load(kwargs['parselet'])
         self.parselet = Parselet.from_jsonstring(json.dumps(dic))
-        keys = ['title', 'author', 'summary', 'image', 'url', 'timestamp']
-        # keys = parselet_keys(dic)
+        keys = parselet_keys(dic)
         self.item_cls = get_item_class(keys)
         domain = kwargs['domain']
         self.allowed_domains = [domain]
