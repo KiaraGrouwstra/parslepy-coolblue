@@ -9,7 +9,13 @@ from scrapy.linkextractors.lxmlhtml import LxmlParserLinkExtractor
 from parslepy import Parselet
 
 class ParsleySpider(Spider):
-    '''scrape a parselet'''
+    '''scrape a parselet
+        *domain:    the domain to crawl
+        url:        seed url, default domain index
+        *parselet:  path to the yaml file
+        crawl:      whether to crawl, default False
+        pattern:    regex of urls to dump, default all crawled
+    '''
     name = 'Parsley'
 
     def __init__(self, **kwargs):
