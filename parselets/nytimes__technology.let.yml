@@ -1,6 +1,6 @@
 ---
 "--(.initial-set)":
-  newsitems(article):
+  items(article):
   - title: h2
     url: a @href
     author: .byline

@@ -19,8 +19,7 @@ class NYTimesSpider(scrapy.Spider):
 
     def __init__(self, **kwargs):
         super(NYTimesSpider, self).__init__(**kwargs)
-        self.item_key = kwargs['item_key'] or 'newsitems'
         self.parselet = Parselet.from_jsonstring(json.dumps(yaml.load(kwargs['parselet'])))
 
     def parse(self, response):
-        return iter_parsley(NYTimesNewsItem, self.parselet, self.item_key, response)
+        return iter_parsley(NYTimesNewsItem, self.parselet, response)

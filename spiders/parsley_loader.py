@@ -9,8 +9,8 @@ class MyItemLoader(ItemLoader):
     '''
     default_output_processor = TakeFirst()
 
-def iter_parsley(item_cls, parselet, item_key, response):
+def iter_parsley(item_cls, parselet, response):
     loader = MyItemLoader(item_cls())
-    for item_value in parselet.parse(cStringIO.StringIO(response.body)).get(item_key):
+    for item_value in parselet.parse(cStringIO.StringIO(response.body)).get('items'):
         loader.add_value(None, item_value)
         yield loader.load_item()
