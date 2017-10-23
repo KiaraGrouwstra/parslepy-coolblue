@@ -4,13 +4,16 @@ from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst
 
 class MyItemLoader(ItemLoader):
-    '''
-    my default scrapy item loader, takes the first item found
-    '''
+    '''scrapy item loader'''
     default_output_processor = TakeFirst()
 
-def iter_parsley(item_cls, parselet, response):
+def iter_parsley(item_cls, parselet, response, item_key):
     loader = MyItemLoader(item_cls())
-    for item_value in parselet.parse(cStringIO.StringIO(response.body)).get('items'):
-        loader.add_value(None, item_value)
+    data = parselet.parse(cStringIO.StringIO(response.body))
+    if item_key:
+        for item_value in data.get(item_key):
+            loader.add_value(None, item_value)
+            yield loader.load_item()
+    else:
+        loader.add_value(None, data)
         yield loader.load_item()
