@@ -1,8 +1,8 @@
 '''parsley spider'''
 from cStringIO import StringIO
 from re import search
-from json import dumps as json_dumps
-from yaml import load as yaml_load
+import json
+import yaml
 from scrapy import Spider
 from scrapy.http import Request
 from scrapy.linkextractors.lxmlhtml import LxmlParserLinkExtractor
@@ -22,21 +22,21 @@ class ParsleySpider(Spider):
     def __init__(self, **kwargs):
         with open(kwargs['parselet']) as _f:
             yml = _f.read()
-        dic = yaml_load(yml)
+            dic = yaml.load(yml)
+            parselet = Parselet.from_jsonstring(json.dumps(dic))
+            # parselet = Parselet.from_yamlfile(_f)
         domain = kwargs['domain']
         url = kwargs.get('url', 'https://{}/'.format(domain))
         super(ParsleySpider, self).__init__(**kwargs)
         self.crawl = bool(kwargs.get('crawl', 0))
         self.pattern = kwargs.get('pattern', '')
-        self.parselet = Parselet.from_jsonstring(json_dumps(dic))
+        self.parselet = parselet
         self.allowed_domains = [domain]
         self.start_urls = [url]
 
     def parse(self, response):
         url = response.request.url
-        body = response.body
         if search(self.pattern, url):
-            # yield vars(response)
             data = self.parselet.parse(StringIO(body))
             if len(data.keys()) == 1 and isinstance(data.values()[0], list):
                 for item_value in data.values()[0]:
