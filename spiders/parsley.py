@@ -21,10 +21,7 @@ class ParsleySpider(Spider):
 
     def __init__(self, **kwargs):
         with open(kwargs['parselet']) as _f:
-            yml = _f.read()
-            dic = yaml.load(yml)
-            parselet = Parselet.from_jsonstring(json.dumps(dic))
-            # parselet = Parselet.from_yamlfile(_f)
+            parselet = Parselet.from_yamlfile(_f)
         domain = kwargs['domain']
         url = kwargs.get('url', 'https://{}/'.format(domain))
         super(ParsleySpider, self).__init__(**kwargs)
@@ -37,6 +34,7 @@ class ParsleySpider(Spider):
     def parse(self, response):
         url = response.request.url
         if search(self.pattern, url):
+            body = response.body
             data = self.parselet.parse(StringIO(body))
             if len(data.keys()) == 1 and isinstance(data.values()[0], list):
                 for item_value in data.values()[0]:
