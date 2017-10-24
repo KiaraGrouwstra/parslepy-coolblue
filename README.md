@@ -1,5 +1,7 @@
 # Usage:
 ```bash
-scrapy crawl Parsley -a parselet='parselets/nytimes.yml' -a domain='nytimes.com' -a url='http://www.nytimes.com/pages/technology/' -t json -o - > results/nytimes.json
-# -a domain='www.coolblue.nl'
+scrapy crawl Kafka -a crawl='y' 
+scrapy crawl Parsley -a parselet='parselets/nytimes.yml' 
+-a domain='nytimes.com' -a url='http://www.nytimes.com/pages/technology/' -t jl -o -
+ > results/nytimes.jl
 ```
