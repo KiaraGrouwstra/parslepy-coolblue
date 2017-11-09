@@ -1,5 +1,9 @@
 # Usage:
 ```bash
+cd /opt/kafka
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+
 scrapy crawl Kafka -a crawl='y' 
 scrapy crawl Parsley -a parselet='parselets/nytimes.yml' 
 scrapy crawl Parsley -a parselet='parselets/coolblue.yml' 
