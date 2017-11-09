@@ -1,0 +1,6 @@
+extruct==0.4.0
+kafka==1.3.5
+parslepy==0.3.0
+PyYAML==3.12
+Scrapy==1.4.0
+toolz==0.8.2
