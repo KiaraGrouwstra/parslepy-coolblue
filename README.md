@@ -17,4 +17,6 @@ scrapy crawl Parsley -a parselet='parselets/coolblue.yml' -a domain='www.coolblu
 scrapy crawl Kafka -a crawl='y' -a domain='nytimes.com' -a url='http://www.nytimes.com/pages/technology/' -t jl -o -
 
 https://www.coolblue.nl/ons-assortiment
+
+python parse.py -i results/coolblue_prods.jl -o results/bar.jl -p parselets/coolblue.yml
 ```
