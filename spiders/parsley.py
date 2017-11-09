@@ -1,18 +1,26 @@
 """parsley spider"""
-from cStringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+import json
+import yaml
 from extruct import extract as extruct
 from spiders.spider import MySpider
 from parslepy import Parselet
 
 class ParsleySpider(MySpider):
     """ Scrape a parselet
-        *parselet:  path to the yaml file
+        *parselet: path to the yaml file
     """
     name = 'Parsley'
 
     def __init__(self, **kwargs):
         with open(kwargs['parselet']) as _f:
-            parselet = Parselet.from_yamlfile(_f)
+            yml = _f.read()
+            dic = yaml.load(yml)
+            parselet = Parselet.from_jsonstring(json.dumps(dic))
+            # parselet = Parselet.from_yamlfile(_f)
         super(ParsleySpider, self).__init__(**kwargs)
         self.parselet = parselet
 
