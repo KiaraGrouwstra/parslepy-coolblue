@@ -1,33 +1,33 @@
 title: .js-product-name # Samsung WW80J6403EW Eco Bubble
 text: .product-description--content # De Samsung WW80J6403EW ...
-availability: .js-availability-state-information @data-alt-text # Op voorraad
+availability: .js-availability-state-information @data-alt-text | startsWith('Op') # Op voorraad
 # productId: extract from url: https://www.coolblue.nl/product/697284/samsung-ww80j6403ew-eco-bubble.html
 # sku: no clean extractor
 # mpn: 
 # brand: 
-originalPrice?: .sales-price--former # 499,-
-price: .sales-price--current # 399,<span class="sales-price--cents">-</span> # offerPrice
+originalPrice?: .product-page--order .sales-price--former  | pipe(replace(/[.\-]|(<[^>]*>)/g,''), replace(',','.'), Number) # 499,-
+price:          .product-page--order .sales-price--current | pipe(replace(/[.\-]|(<[^>]*>)/g,''), replace(',','.'), Number) # 399,<span class="sales-price--cents">-</span> # offerPrice
 # breadcrumb: marked up with schema.org Microdata
-specs(.js-specifications-content):
+--(.js-specifications-content):
   product_tabs(.underlined-tabs__navigation > a):
-  - id: ./@href # #specs-product-762394
-    pic: img @src # https://image.coolblue.io/products/543154?width=100&amp;height=100
+  - id: . @href | pipe(match(/\d+$/), prop(0)) # #specs-product-762394
+    pic: img @src | pipe(match(/\d+/), prop(0)) # https://image.coolblue.io/products/543154?width=100&amp;height=100
     title: span # Nintendo Switch Rood/Blauw
   single_specs(.grid-section-xs--gap-m):
-  - category: .h4 # Powerbank eigenschappen
+  - category: .h4 | replace(/ eigenschappen$/g,'') # Powerbank eigenschappen
     specs(.product-specs .product-specs__list-item):
-    - k:    dt > a @data-tooltipbox-title # Stofbestendig
-      desc: dt > a @data-tooltipbox-content # Dit geeft aan of het product is voorzien van een speciale sealing waardoor er geen stof naar binnen kan komen.
-      v:    dd # Nee
+    - k:     dt # Stofbestendig
+      desc?: dt > a @data-tooltipbox-content # Dit geeft aan of het product is voorzien van een speciale sealing waardoor er geen stof naar binnen kan komen.
+      v:     dd # Nee
   product_specs(.js-tab-content):
   - categories(.grid-section-xs--gap-m):
-    - category: .h4 # Powerbank eigenschappen
+    - category: .h4 | replace(/ eigenschappen$/g,'') # Powerbank eigenschappen
       specs(.product-specs .product-specs__list-item):
-      - k:    dt > a @data-tooltipbox-title # Stofbestendig
-        desc: dt > a @data-tooltipbox-content # Dit geeft aan of het product is voorzien van een speciale sealing waardoor er geen stof naar binnen kan komen.
-        v:    dd # Nee
+      - k:     dt # Stofbestendig
+        desc?: dt > a @data-tooltipbox-content # Dit geeft aan of het product is voorzien van een speciale sealing waardoor er geen stof naar binnen kan komen.
+        v:     dd # Nee
 images(.product-page--media-gallery .media-gallery--thumbnail):
-- url: .js-media-gallery--link @href # array: /product/697284/samsung-ww80j6403ew-eco-bubble.html?imageId=488510 # https://image.coolblue.io/products/488510?width=100&amp;height=100
+- .js-media-gallery--link:not(.js-media-gallery--video) @href | pipe(match(/=(\d+)/), prop(1)) # array: /product/697284/samsung-ww80j6403ew-eco-bubble.html?imageId=488510 # https://image.coolblue.io/products/488510?width=100&amp;height=100
   # height: 
   # width: 
   # naturalHeight: 
@@ -48,44 +48,44 @@ images(.product-page--media-gallery .media-gallery--thumbnail):
 #     rating: .review-rating--reviews # 9,2/10
 energy_efficiency_class?: .product-page--energy-label # A+++ # prop: energieklasse
 # accessory_url: https://www.coolblue.nl/accessoires/697284/samsung-ww80j6403ew-eco-bubble.html
-variant_category: .product-collection--title # In de kleur/uitvoering:
+variant_category: .product-collection--title | replace(/(In de )|:/g,'') # In de kleur/uitvoering:
 variants(.js-product-collection > option): # a
 - name: . # Startpakket Thuis
-  url: ./@value # ./@href # /product/792222/nintendo-switch-startpakket-thuis.html
+  url: . @value | pipe(match(/\d+/), prop(0)) # ./@href # /product/792222/nintendo-switch-startpakket-thuis.html
 menu_cats(.js-navigation-top a):
-- title: ./@title # Miele
-  link: ./@href # /producttype:wasmachines/merk:miele
+- title: . @title # Miele
+  link: . @href # /producttype:wasmachines/merk:miele
 services(.product-page--order .product-order--extra-services-item):
-- id: ./@value # 753558
+- id: . @value # 753558
   name: .product-option--name # Aansluiten op trekschakelaar
-  price: .product-option--price # 29,99
+  price: .product-option--price | pipe(replace(/[.\-]|(<[^>]*>)/g,''), replace(',','.'), Number) # 29,99
 accessories_rec(.horizontal-scroll-list--item): # product-item--image-link
-- url: a @href # ./@title # array: /product/272892/wpro-magnetische-ontkalker.html
+- a @href | pipe(match(/\d+/), prop(0)) # @title # array: /product/272892/wpro-magnetische-ontkalker.html
 # accessory_cats(.link-list > .link-list--item > a):
-#   - id: ./@href
+#   - id: @href
 #     title: . # Aansluitingen voor witgoed <span class="count"> (5) </span>
 #     count: .count # (5)
 --(.product-summary-information):
-  pros(.js-pros-and-cons-pro .icon-with-text__text):
-  - text: . # Was meer in één wasbeurt dankzij de ruime trommel van 8 kilogram.
-  cons(.js-pros-and-cons-con .icon-with-text__text):
-  - text: . # Het wasmiddel wordt niet automatisch gedoseerd, dus meet goed af hoeveel je gebruikt.
-includes?(.js-product-in-the-box--item):
-- name: . # ['Aanvoerslang', ...]
+  pros(.js-pros-and-cons-pro):
+  - .icon-with-text__text # Was meer in één wasbeurt dankzij de ruime trommel van 8 kilogram.
+  cons(.js-pros-and-cons-con):
+  - .icon-with-text__text # Het wasmiddel wordt niet automatisch gedoseerd, dus meet goed af hoeveel je gebruikt.
+includes(.js-product-in-the-box--item):
+- . # ['Aanvoerslang', ...]
 # contents?: # inhoud, ids covered in specs
 combo_products(.product-page--sales-combination-item):
 - --(.combination-card--image-wrapper > img):
-    id: ./@data-src # https://image.coolblue.io/products/768776?width=100&amp;height=100
-    # title: . @alt # Samsung DV80M5210QW
+    id: . @data-src | pipe(match(/\d+/), prop(0)) # https://image.coolblue.io/products/768776?width=100&amp;height=100
+    # title: @alt # Samsung DV80M5210QW
   --(.combination-card--order-block):
-    discount?: .combination-discount--amount # 5% korting
+    discount?: .combination-discount--amount | pipe(match(/\d+/), prop(0), Number, flip(divide)(100)) # 5% korting
     # --(.combination-price):
     #   originalPrice: .sales-price--former
     #   offerPrice: .sales-price--current
 insurance(.product-option.alt-two-lines > .product-option--description):
-  title: .product-option--name # 5 jaar Zekerheidspakket
+- title: .product-option--name # 5 jaar Zekerheidspakket
   --(.js-insurance-information-link):
-    id: ./@data-hash # 665398
+    id: . @data-hash # 665398
     # url: @href # /verzekeringsinformatie/665398/697284
     # provider: @data-modal-subtitle # Actua & Coolblue
     # price: . > .product-option--price # 78,95 eenmalig
